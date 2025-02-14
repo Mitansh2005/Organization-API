@@ -1,6 +1,5 @@
 package com.task.org.controller;
 
-import com.task.org.domain.Employee;
 import com.task.org.dto.department.DepartmentDTO;
 import com.task.org.dto.department.DepartmentDetailDTO;
 import com.task.org.service.DepartmentService;

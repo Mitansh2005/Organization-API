@@ -2,6 +2,9 @@ package com.task.org.controller;
 
 import com.task.org.domain.Users;
 import com.task.org.service.UserService;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,23 +18,24 @@ public class UserController {
     }
 
     @GetMapping
-    public List<Users> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<Users>> getAllUsers() {
+        return new ResponseEntity<>(userService.getAllUsers(),HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Users getUser(@PathVariable Integer id) {
-        return userService.getUser(id);
+    public ResponseEntity<Users> getUser(@PathVariable Integer id) {
+        return new ResponseEntity<>(userService.getUser(id),HttpStatus.OK);
     }
 
     @PostMapping("/register")
-    public void addUser(@RequestBody Users users) {
+    public ResponseEntity<Void> addUser(@RequestBody Users users) {
         userService.addUser(users);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Users users) {
+    public ResponseEntity<String> login(@RequestBody Users users) {
         System.out.println(users);
-        return userService.verify(users);
+        return new ResponseEntity<>(userService.verify(users),HttpStatus.CONTINUE);
     }
 }
