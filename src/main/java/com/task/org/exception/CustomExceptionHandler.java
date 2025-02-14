@@ -4,6 +4,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -31,6 +32,11 @@ public class CustomExceptionHandler {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN,ex.getMessage());
             errorDetail.setProperty("access_denied_reason","JWT token already expired");
         }
+        if (ex instanceof AuthorizationDeniedException){
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN,ex.getMessage());
+            errorDetail.setProperty("access_denied_reason","Authorization Failed !");
+        }
+
         return errorDetail;
     }
 }

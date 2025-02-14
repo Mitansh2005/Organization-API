@@ -34,8 +34,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Users users) {
+    public String login(@RequestBody Users users) {
         System.out.println(users);
-        return new ResponseEntity<>(userService.verify(users),HttpStatus.CONTINUE);
+        return (userService.verify(users));
     }
 }
