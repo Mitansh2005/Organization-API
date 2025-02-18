@@ -1,0 +1,12 @@
+package com.task.org.enums;
+
+public enum Authority {
+    VIEW_EMPLOYEES,
+    EDIT_EMPLOYEES,
+    VIEW_PROJECTS,
+    EDIT_PROJECTS,
+    VIEW_DEPARTMENTS,
+    EDIT_DEPARTMENTS,
+    VIEW_ORGANIZATIONS,
+    EDIT_ORGANIZATIONS
+}
