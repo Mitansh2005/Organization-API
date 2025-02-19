@@ -40,11 +40,16 @@ public class EmployeeService {
     }
 
     public List<EmployeeGetDTO> getEmployeesByOrganization(Long orgId) {
-        return employeeRepository.findByOrganizationId(orgId).stream().map(employeeGetMapper).collect(Collectors.toList());
+        List<Employee> employees = employeeRepository.findByOrganizationId(orgId).orElseThrow(()->{
+            throw new IllegalStateException("No organization with id: "+orgId);
+        });
+        return employees.stream().map(employeeGetMapper).collect(Collectors.toList());
     }
 
     public EmployeeDTO getEmployeesById(Long employeeId) {
-        return employeeRepository.findById(employeeId).map(employeeMapper).orElse(null);
+        return employeeRepository.findById(employeeId).map(employeeMapper).orElseThrow(()->{
+            throw new IllegalStateException("No employee by id: "+ employeeId);
+        });
     }
 
     public void addEmployee(EmployeeCreateDTO employeeDTO) {
@@ -60,10 +65,12 @@ public class EmployeeService {
                         .stream())
                 .collect(Collectors.toSet()));
         if (employeeDTO.getProjects() != null) {
-            employee.setProjects(employeeDTO.getProjects().stream().map(project -> projectRepository.findByProjectName(project.getProjectName()).orElse(null)).collect(Collectors.toSet()));
+            employee.setProjects(employeeDTO.getProjects().stream().map(project -> projectRepository.findByProjectName(project.getProjectName()).orElseThrow(()->{
+                throw new IllegalStateException("No project by name: "+project.getProjectName());
+            })).collect(Collectors.toSet()));
         }
         employee.setOrganization(organizationRepository.findByOrgName(employeeDTO.getOrganization().getOrgName()).orElseThrow(() -> {
-            throw new NullPointerException("Organization does not exist!");
+            throw new IllegalStateException("Organization does not exist!");
         }));
         employee.setCreatedTimeStamp(LocalDateTime.now());
         employee.setUpdatedTimeStamp(LocalDateTime.now());
@@ -71,21 +78,23 @@ public class EmployeeService {
     }
 
     public void updateEmployee(Long employeeId, EmployeeUpdateDTO employeeUpdateDTO) {
-        employeeRepository.findById(employeeId).ifPresent(existingEmployee -> {
+        employeeRepository.findById(employeeId).ifPresentOrElse(existingEmployee -> {
             existingEmployee.setEmployeeName(employeeUpdateDTO.getEmployeeName());
             existingEmployee.setSalary(employeeUpdateDTO.getSalary());
             existingEmployee.setUpdatedTimeStamp(LocalDateTime.now());
             employeeRepository.save(existingEmployee);
+        },()->{
+            throw new IllegalStateException("No employee by id: "+employeeId);
         });
     }
 
     public void updateDepartmentOfEmployee(Long employeeId, EmployeeUpdateDeptDTO employeeUpdateDeptDTO) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> {
-            throw new RuntimeException("No employee with Id: " + employeeId);
+            throw new IllegalStateException("No employee with Id: " + employeeId);
         });
         List<Department> departments = departmentRepository.findAllById(employeeUpdateDeptDTO.getDeptIds());
         if (departments.isEmpty()) {
-            throw new RuntimeException("No departments found");
+            throw new NullPointerException("No departments found");
         } else {
             employee.setDepartments(new HashSet<>(departments));
             employeeRepository.save(employee);
@@ -93,6 +102,9 @@ public class EmployeeService {
     }
 
     public void deleteEmployee(Long employeeId) {
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(()->{
+            throw new IllegalStateException("No employee with id: "+employeeId);
+        });
         employeeRepository.deleteById(employeeId);
     }
 }

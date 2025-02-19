@@ -11,6 +11,7 @@ import com.task.org.repository.EmployeeRepository;
 import com.task.org.repository.OrganizationRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,34 +36,52 @@ public class DepartmentService {
     }
 
     public List<DepartmentDTO> getAllDepartmentsByOrganization(Long orgId) {
-        return departmentRepository.findByOrganizationId(orgId).stream().map(departmentMapper).collect(Collectors.toList());
+        List<Department> departments = departmentRepository.findByOrganizationId(orgId).orElseThrow(() -> {
+            throw new IllegalStateException("No organization with id: " + orgId);
+        });
+        return departments.stream().map(departmentMapper).collect(Collectors.toList());
     }
 
     public DepartmentDetailDTO getDepartment(Long deptId) {
-        return departmentRepository.findById(deptId).stream().map(departmentDetailMapper).findFirst().orElse(null);
+        return departmentRepository.findById(deptId).stream().map(departmentDetailMapper).findFirst().orElseThrow(()->{
+            throw new IllegalStateException("No department with id: "+deptId);
+        });
     }
 
     public void addDepartment(DepartmentDTO departmentDTO) {
         Department department = new Department();
         department.setDeptName(departmentDTO.getDeptName());
-        department.setOrganization(organizationRepository.findByOrgName(departmentDTO.getOrganization().getOrgName()).orElse(null));
+        department.setOrganization(organizationRepository.findByOrgName(departmentDTO.getOrganization().getOrgName()).orElseThrow(()->{
+            throw new NullPointerException("No organization with name: "+departmentDTO.getOrganization().getOrgName());
+        }));
         department.setCreatedTimeStamp(LocalDateTime.now());
         department.setUpdatedTimeStamp(LocalDateTime.now());
         departmentRepository.save(department);
     }
 
     public void updateDepartment(Long deptId, DepartmentDTO departmentDTO) {
-        departmentRepository.findById(deptId).ifPresent(existingDepartment -> {
+        departmentRepository.findById(deptId).ifPresentOrElse(existingDepartment -> {
             existingDepartment.setDeptName(departmentDTO.getDeptName());
-            existingDepartment.setOrganization(organizationRepository.findByOrgName(departmentDTO.getOrganization().getOrgName()).orElse(null));
+            existingDepartment.setOrganization(organizationRepository.findByOrgName(departmentDTO.getOrganization().getOrgName()).orElseThrow(()->{
+                throw new NullPointerException("No organization with name: "+departmentDTO.getOrganization().getOrgName());
+            }));
             existingDepartment.setUpdatedTimeStamp(LocalDateTime.now());
             departmentRepository.save(existingDepartment);
+        },()->{
+            throw new IllegalStateException("No department with id: "+deptId);
         });
     }
 
     public void removeEmployees(Long deptId, List<Long> employeesId) {
-        departmentRepository.findById(deptId).ifPresent(existingDepartment -> {
-            departmentRepository.deleteByEmployeesIdIn(employeesId);
+        departmentRepository.findById(deptId).ifPresentOrElse(existingDepartment -> {
+            Set<Employee> employees = new HashSet<>(employeeRepository.findAllById(employeesId));
+            if (!employees.isEmpty()){
+                for (Employee employee : employees) {
+                    employeeRepository.deleteByDepartmentsAndId(existingDepartment,deptId);
+                }
+            }
+        },()->{
+            throw new IllegalStateException("No department by id: "+deptId);
         });
     }
 

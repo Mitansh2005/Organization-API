@@ -25,7 +25,7 @@ services:
       dockerfile: Dockerfile
     container_name: spring-backend
     volumes:
-      - C:/Users/Mitansh/OneDrive/Desktop/Internship/learning/oop/18-02-2025/Task/org/src:/app/src
+      - ./src:/app/src
     restart: always
     depends_on:
       - postgres

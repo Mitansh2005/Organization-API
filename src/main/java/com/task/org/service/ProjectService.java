@@ -43,7 +43,9 @@ public class ProjectService {
     }
 
     public ProjectDetailDTO getProject(Long projectId) {
-        return projectRepository.findById(projectId).stream().map(projectDetailMapper).findFirst().orElse(null);
+        return projectRepository.findById(projectId).stream().map(projectDetailMapper).findFirst().orElseThrow(()->{
+            throw new NullPointerException("No project with id: "+projectId);
+        });
     }
 
     public void addProject(ProjectDetailDTO projectDetailDTO) {
@@ -75,7 +77,7 @@ public class ProjectService {
     }
 
     public void addEmployees(Long projectId, List<Long> employeesIds) {
-        projectRepository.findById(projectId).ifPresent(existingProject -> {
+        projectRepository.findById(projectId).ifPresentOrElse(existingProject -> {
             Set<Employee> employees = new HashSet<>(employeeRepository.findAllById(employeesIds));
             if (!employees.isEmpty()) {
                 existingProject.setEmployees(employees);
@@ -86,7 +88,7 @@ public class ProjectService {
             } else {
                 throw new IllegalStateException("Employee with provided Id does not exist!!");
             }
-        });
+        },()->{throw new NullPointerException("No project with this id: "+ projectId);});
     }
 
     public void removeEmployees(Long projectId, List<Long> employeeIds) {

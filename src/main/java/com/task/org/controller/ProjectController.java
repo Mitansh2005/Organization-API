@@ -19,7 +19,7 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    @GetMapping("/organization/{orgId}")
+    @GetMapping("/organizations/{orgId}")
     public ResponseEntity<List<ProjectDTO>> getAllProjects(@PathVariable Long orgId) {
         return new ResponseEntity<>(projectService.getAllProjects(orgId), HttpStatus.OK);
     }

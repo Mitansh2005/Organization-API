@@ -31,7 +31,9 @@ public class OrganizationService {
     }
 
     public OrganizationDetailDTO getOrganization(Long orgId) {
-        return organizationRepository.findById(orgId).stream().map(organizationDetailMapper).findFirst().orElse(null);
+        return organizationRepository.findById(orgId).stream().map(organizationDetailMapper).findFirst().orElseThrow(()->{
+            throw new IllegalStateException("No organization with id: "+orgId);
+        });
     }
 
     public void addOrganization(OrganizationCreateDTO organizationCreateDTO) {
@@ -43,14 +45,19 @@ public class OrganizationService {
     }
 
     public void updateOrganization(OrganizationDTO organizationDTO, Long orgId) {
-        organizationRepository.findById(orgId).ifPresent(existingOrganization -> {
+        organizationRepository.findById(orgId).ifPresentOrElse(existingOrganization -> {
             existingOrganization.setOrgName(organizationDTO.getOrgName());
             existingOrganization.setUpdatedTimeStamp(LocalDateTime.now());
             organizationRepository.save(existingOrganization);
+        },()->{
+            throw new IllegalStateException("No organization with id: "+orgId);
         });
     }
 
     public void deleteOrganization(Long orgId) {
+        Organization organization = organizationRepository.findById(orgId).orElseThrow(()->{
+            throw new IllegalStateException("No organization with id: "+orgId);
+        });
         organizationRepository.deleteById(orgId);
     }
 }

@@ -18,7 +18,7 @@ public class DepartmentController {
         this.departmentService = departmentService;
     }
 
-    @GetMapping("/organization/{orgId}")
+    @GetMapping("/organizations/{orgId}")
     public ResponseEntity<List<DepartmentDTO>> getDepartmentsByOrganization(@PathVariable Long orgId) {
         return new ResponseEntity<>(departmentService.getAllDepartmentsByOrganization(orgId), HttpStatus.OK);
     }
