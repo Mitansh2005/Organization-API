@@ -12,8 +12,6 @@ import java.util.Set;
 
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
-    public Optional<Department> findByDeptName(String deptName);
-
     public Optional<List<Department>> findByOrganizationId(Long orgId);
 
     Set<Department> findByDeptNameAndOrganization(String deptName, Organization organization);

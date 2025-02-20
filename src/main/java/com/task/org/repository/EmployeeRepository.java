@@ -14,5 +14,4 @@ import java.util.Set;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     public Optional<List<Employee>> findByOrganizationId(Long orgId);
-    void deleteByDepartmentsAndId(Department department, Long deptId);
 }
