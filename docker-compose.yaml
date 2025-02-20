@@ -24,6 +24,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: spring-backend
+    volumes:
+      - ./src:/app/src
     restart: always
     depends_on:
       - postgres

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/departments")
+@RequestMapping("/api/departments")
 public class DepartmentController {
     private final DepartmentService departmentService;
 
@@ -18,7 +18,7 @@ public class DepartmentController {
         this.departmentService = departmentService;
     }
 
-    @GetMapping("/organization/{orgId}")
+    @GetMapping("/organizations/{orgId}")
     public ResponseEntity<List<DepartmentDTO>> getDepartmentsByOrganization(@PathVariable Long orgId) {
         return new ResponseEntity<>(departmentService.getAllDepartmentsByOrganization(orgId), HttpStatus.OK);
     }

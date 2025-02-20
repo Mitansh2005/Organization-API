@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/projects")
+@RequestMapping("/api/projects")
 public class ProjectController {
     private final ProjectService projectService;
 
@@ -19,7 +19,7 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    @GetMapping("/organization/{orgId}")
+    @GetMapping("/organizations/{orgId}")
     public ResponseEntity<List<ProjectDTO>> getAllProjects(@PathVariable Long orgId) {
         return new ResponseEntity<>(projectService.getAllProjects(orgId), HttpStatus.OK);
     }

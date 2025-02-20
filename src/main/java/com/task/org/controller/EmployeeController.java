@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/employees")
+@RequestMapping("/api/employees")
 public class EmployeeController {
     private final EmployeeService employeeService;
 
@@ -17,7 +17,7 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @GetMapping("/organization/{orgId}")
+    @GetMapping("/organizations/{orgId}")
     public ResponseEntity<List<EmployeeGetDTO>> getAllEmployeesByOrg(@PathVariable Long orgId) {
         return new ResponseEntity<>(employeeService.getEmployeesByOrganization(orgId), HttpStatus.OK);
     }
@@ -39,7 +39,7 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PatchMapping("/{employeeId}/department")
+    @PatchMapping("/{employeeId}/departments")
     public ResponseEntity<Void> updateDepartmentOfEmployee(@PathVariable Long employeeId, @RequestBody EmployeeUpdateDeptDTO employeeUpdateDeptDTO) {
         employeeService.updateDepartmentOfEmployee(employeeId, employeeUpdateDeptDTO);
         return ResponseEntity.status(HttpStatus.OK).build();

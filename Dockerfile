@@ -1,26 +1,29 @@
-#base image
-FROM openjdk:17-jdk-slim
+#Build stage:
+FROM maven:3.8.4-openjdk-17-slim AS build
 
-#set the working directory
+#set working dir
 WORKDIR /app
 
 #copy pom.xml
 COPY pom.xml .
 
-#get all the dependency
-RUN mvn dependency:go-offline
-
-#copy the entire source code
+#copy src code
 COPY src ./src
 
-#generate the jar file skip tests
-RUN mvn package -DskipTests
+#build the application
+RUN mvn clean package -DskipTests
 
-#copy the jar file into the container
-COPY target/*.jar app.jar
+# Runtime Stage: Use OpenJDK image to run the application
+FROM openjdk:17-jdk-slim
 
-#expose the application port
+# Set the working directory
+WORKDIR /app
+
+# Copy the generated JAR file from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose the application port
 EXPOSE 8080
 
-#command to run the application
-ENTRYPOINT ["java","-jar","app.jar"]
+# Command to run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
