@@ -11,7 +11,6 @@ import com.task.org.repository.EmployeeRepository;
 import com.task.org.repository.OrganizationRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -72,17 +71,18 @@ public class DepartmentService {
         });
     }
 
-    public void removeEmployees(Long deptId, List<Long> employeesId) {
-        departmentRepository.findById(deptId).ifPresentOrElse(existingDepartment -> {
-            Set<Employee> employees = new HashSet<>(employeeRepository.findAllById(employeesId));
-            if (!employees.isEmpty()){
-                for (Employee employee : employees) {
-                    employeeRepository.deleteByDepartmentsAndId(existingDepartment,deptId);
-                }
-            }
-        },()->{
-            throw new IllegalStateException("No department by id: "+deptId);
+    public void removeEmployees(Long deptId, Set<Long> employeesId) {
+        Department department = departmentRepository.findById(deptId).orElseThrow(()->{
+            throw new IllegalStateException("No department with id: "+ deptId);
         });
+        System.out.println(department.getDeptName());
+        Set<Employee> employees = department.getEmployees().stream().filter(employee -> employeesId.contains(employee.getId())).collect(Collectors.toSet());
+        for (Employee employee:employees){
+            employee.getDepartments().remove(department);
+        }
+        department.getEmployees().removeAll(employees);
+        employeeRepository.saveAll(employees);
+        departmentRepository.save(department);
     }
 
     public void addEmployees(Long deptId, List<Long> employeeIds) {

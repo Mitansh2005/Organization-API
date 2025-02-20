@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/departments")
@@ -41,7 +42,7 @@ public class DepartmentController {
     }
 
     @PatchMapping("/{deptId}/employees/remove")
-    public ResponseEntity<Void> removeEmployeeFromDept(@PathVariable Long deptId, @RequestBody List<Long> employeeIds) {
+    public ResponseEntity<Void> removeEmployeeFromDept(@PathVariable Long deptId, @RequestBody Set<Long> employeeIds) {
         departmentService.removeEmployees(deptId, employeeIds);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
