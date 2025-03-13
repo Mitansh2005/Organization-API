@@ -43,7 +43,7 @@ public class EmployeeService {
         List<Employee> employees = employeeRepository.findByOrganizationId(orgId).orElseThrow(()->{
             throw new IllegalStateException("No organization with id: "+orgId);
         });
-        return employees.stream().map(employeeGetMapper).collect(Collectors.toList());
+        return employees.stream().map(employeeGetMapper).toList();
     }
 
     public EmployeeDTO getEmployeesById(Long employeeId) {
@@ -102,9 +102,6 @@ public class EmployeeService {
     }
 
     public void deleteEmployee(Long employeeId) {
-        Employee employee = employeeRepository.findById(employeeId).orElseThrow(()->{
-            throw new IllegalStateException("No employee with id: "+employeeId);
-        });
         employeeRepository.deleteById(employeeId);
     }
 }

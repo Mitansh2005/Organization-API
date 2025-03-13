@@ -17,8 +17,8 @@ import java.util.function.Function;
 @Service
 public class JWTService {
 
-    private static String SECRET_KEY = "";
-    private static final long jwtTokenValidityInMs = 1000 * 60 * 60; // 10 hours
+    private static String SECRET_KEY="";
+    private static final long JWT_TOKEN_VALIDITY = 1000 * 60 * 60; // 10 hours
 
     public JWTService() {
         try {
@@ -37,7 +37,7 @@ public class JWTService {
                 .add(claims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtTokenValidityInMs))
+                .expiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
                 .and()
                 .signWith(getKey())
                 .compact();

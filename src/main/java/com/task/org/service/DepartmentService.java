@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class DepartmentService {
+    private static final String DEPT_ERROR_REASON="No department with id:";
     private final DepartmentRepository departmentRepository;
     private final DepartmentMapper departmentMapper;
     private final DepartmentDetailMapper departmentDetailMapper;
@@ -38,12 +39,12 @@ public class DepartmentService {
         List<Department> departments = departmentRepository.findByOrganizationId(orgId).orElseThrow(() -> {
             throw new IllegalStateException("No organization with id: " + orgId);
         });
-        return departments.stream().map(departmentMapper).collect(Collectors.toList());
+        return departments.stream().map(departmentMapper).toList();
     }
 
     public DepartmentDetailDTO getDepartment(Long deptId) {
         return departmentRepository.findById(deptId).stream().map(departmentDetailMapper).findFirst().orElseThrow(()->{
-            throw new IllegalStateException("No department with id: "+deptId);
+            throw new IllegalStateException(DEPT_ERROR_REASON+" "+deptId);
         });
     }
 
@@ -67,15 +68,14 @@ public class DepartmentService {
             existingDepartment.setUpdatedTimeStamp(LocalDateTime.now());
             departmentRepository.save(existingDepartment);
         },()->{
-            throw new IllegalStateException("No department with id: "+deptId);
+            throw new IllegalStateException(DEPT_ERROR_REASON+" "+deptId);
         });
     }
 
     public void removeEmployees(Long deptId, Set<Long> employeesId) {
         Department department = departmentRepository.findById(deptId).orElseThrow(()->{
-            throw new IllegalStateException("No department with id: "+ deptId);
+            throw new IllegalStateException(DEPT_ERROR_REASON+" "+ deptId);
         });
-        System.out.println(department.getDeptName());
         Set<Employee> employees = department.getEmployees().stream().filter(employee -> employeesId.contains(employee.getId())).collect(Collectors.toSet());
         for (Employee employee:employees){
             employee.getDepartments().remove(department);
@@ -102,7 +102,7 @@ public class DepartmentService {
 
     public void deleteDepartment(Long deptId) {
         Department department= departmentRepository.findById(deptId).orElseThrow(()->{
-            throw new IllegalStateException("No Department with id: "+deptId+" was found");
+            throw new IllegalStateException(DEPT_ERROR_REASON+" "+deptId+" was found");
         });
         department.getEmployees().forEach(employee -> employee.getDepartments().remove(department));
         departmentRepository.deleteById(deptId);

@@ -15,40 +15,41 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 
 @RestControllerAdvice
 public class CustomExceptionHandler {
+    private static final String REASON = "access_denied_reason";
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ProblemDetail> handleNullException(NullPointerException ex){
         ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
-        errorDetail.setProperty("access_denied_reason","Null value was passed.");
+        errorDetail.setProperty(REASON,"Null value was passed.");
         return new ResponseEntity<>(errorDetail, HttpStatusCode.valueOf(errorDetail.getStatus()));
     }
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ProblemDetail> handleBadCredentialException(BadCredentialsException ex){
         ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
-        errorDetail.setProperty("access_denied_reason","Authentication Failed Bad Credentials.");
+        errorDetail.setProperty(REASON,"Authentication Failed Bad Credentials.");
         return new ResponseEntity<>(errorDetail, HttpStatusCode.valueOf(errorDetail.getStatus()));
     }
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ProblemDetail> handleAccessDeniedException(AccessDeniedException ex){
         ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN,ex.getMessage());
-        errorDetail.setProperty("access_denied_reason","Not Authorized.");
+        errorDetail.setProperty(REASON,"Not Authorized.");
         return new ResponseEntity<>(errorDetail, HttpStatusCode.valueOf(errorDetail.getStatus()));
     }
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<ProblemDetail> handleSecurityException(SecurityException ex){
         ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
-        errorDetail.setProperty("access_denied_reason", "JWT Signature not valid !");
+        errorDetail.setProperty(REASON, "JWT Signature not valid !");
         return new ResponseEntity<>(errorDetail, HttpStatusCode.valueOf(errorDetail.getStatus()));
     }
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<ProblemDetail> handleExpiredJwtException(ExpiredJwtException ex){
         ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
-        errorDetail.setProperty("access_denied_reason", "JWT token already expired");
+        errorDetail.setProperty(REASON, "JWT token already expired");
         return new ResponseEntity<>(errorDetail, HttpStatusCode.valueOf(errorDetail.getStatus()));
     }
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<ProblemDetail> handleAuthorizationDeniedException(AuthorizationDeniedException ex){
         ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
-        errorDetail.setProperty("access_denied_reason", "Authorization Failed !");
+        errorDetail.setProperty(REASON, "Authorization Failed !");
         return new ResponseEntity<>(errorDetail, HttpStatusCode.valueOf(errorDetail.getStatus()));
     }
 

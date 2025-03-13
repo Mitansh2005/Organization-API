@@ -1,7 +1,6 @@
 package com.task.org.repository;
 
 import com.task.org.domain.Department;
-import com.task.org.domain.Employee;
 import com.task.org.domain.Organization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,5 @@
 package com.task.org.config;
 
-import com.task.org.enums.Role;
 import com.task.org.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +20,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
+    private static final String EMPLOYEE_URL="/api/employees/**";
+    private static final String PROJECT_URL="/api/projects/**";
+    private static final String ORGANIZATION_URL="/api/organizations/**";
+    private static final String DEPARTMENT_URL="/api/organizations/**";
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtFilter jwtFilter;
 
@@ -34,26 +37,26 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers("/api/users/login", "/api/users/register").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/users").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/employees/**").hasAuthority("VIEW_EMPLOYEES")
-                        .requestMatchers(HttpMethod.POST, "/api/employees/**").hasAuthority("EDIT_EMPLOYEES")
-                        .requestMatchers(HttpMethod.PATCH, "/api/employees/**").hasAuthority("EDIT_EMPLOYEES")
-                        .requestMatchers(HttpMethod.PUT, "/api/employees/**").hasAuthority("EDIT_EMPLOYEES")
-                        .requestMatchers(HttpMethod.DELETE, "/api/employees/**").hasAuthority("EDIT_EMPLOYEES")
-                        .requestMatchers(HttpMethod.GET, "/api/projects/**").hasAuthority("VIEW_PROJECTS")
-                        .requestMatchers(HttpMethod.POST, "/api/projects/**").hasAuthority("EDIT_PROJECTS")
-                        .requestMatchers(HttpMethod.PATCH, "/api/projects/**").hasAuthority("EDIT_PROJECTS")
-                        .requestMatchers(HttpMethod.PUT, "/api/projects/**").hasAuthority("EDIT_PROJECTS")
-                        .requestMatchers(HttpMethod.DELETE, "/api/projects/**").hasAuthority("EDIT_PROJECTS")
-                        .requestMatchers(HttpMethod.GET, "/api/departments/**").hasAuthority("VIEW_DEPARTMENTS")
-                        .requestMatchers(HttpMethod.POST, "/api/departments/**").hasAuthority("EDIT_DEPARTMENTS")
-                        .requestMatchers(HttpMethod.PATCH, "/api/departments/**").hasAuthority("EDIT_DEPARTMENTS")
-                        .requestMatchers(HttpMethod.PUT, "/api/departments/**").hasAuthority("EDIT_DEPARTMENTS")
-                        .requestMatchers(HttpMethod.DELETE, "/api/departments/**").hasAuthority("EDIT_DEPARTMENTS")
-                        .requestMatchers(HttpMethod.GET, "/api/organizations/**").hasAuthority("VIEW_ORGANIZATIONS")
-                        .requestMatchers(HttpMethod.POST, "/api/organizations/**").hasAuthority("EDIT_ORGANIZATIONS")
-                        .requestMatchers(HttpMethod.PATCH, "/api/organizations/**").hasAuthority("EDIT_ORGANIZATIONS")
-                        .requestMatchers(HttpMethod.PUT, "/api/organizations/**").hasAuthority("EDIT_ORGANIZATIONS")
-                        .requestMatchers(HttpMethod.DELETE, "/api/organizations/**").hasAuthority("EDIT_ORGANIZATIONS")
+                        .requestMatchers(HttpMethod.GET, EMPLOYEE_URL).hasAuthority("VIEW_EMPLOYEES")
+                        .requestMatchers(HttpMethod.POST, EMPLOYEE_URL).hasAuthority("EDIT_EMPLOYEES")
+                        .requestMatchers(HttpMethod.PATCH, EMPLOYEE_URL).hasAuthority("EDIT_EMPLOYEES")
+                        .requestMatchers(HttpMethod.PUT, EMPLOYEE_URL).hasAuthority("EDIT_EMPLOYEES")
+                        .requestMatchers(HttpMethod.DELETE, EMPLOYEE_URL).hasAuthority("EDIT_EMPLOYEES")
+                        .requestMatchers(HttpMethod.GET, PROJECT_URL).hasAuthority("VIEW_PROJECTS")
+                        .requestMatchers(HttpMethod.POST, PROJECT_URL).hasAuthority("EDIT_PROJECTS")
+                        .requestMatchers(HttpMethod.PATCH, PROJECT_URL).hasAuthority("EDIT_PROJECTS")
+                        .requestMatchers(HttpMethod.PUT, PROJECT_URL).hasAuthority("EDIT_PROJECTS")
+                        .requestMatchers(HttpMethod.DELETE, PROJECT_URL).hasAuthority("EDIT_PROJECTS")
+                        .requestMatchers(HttpMethod.GET, DEPARTMENT_URL).hasAuthority("VIEW_DEPARTMENTS")
+                        .requestMatchers(HttpMethod.POST, DEPARTMENT_URL).hasAuthority("EDIT_DEPARTMENTS")
+                        .requestMatchers(HttpMethod.PATCH, DEPARTMENT_URL).hasAuthority("EDIT_DEPARTMENTS")
+                        .requestMatchers(HttpMethod.PUT, DEPARTMENT_URL).hasAuthority("EDIT_DEPARTMENTS")
+                        .requestMatchers(HttpMethod.DELETE, DEPARTMENT_URL).hasAuthority("EDIT_DEPARTMENTS")
+                        .requestMatchers(HttpMethod.GET, ORGANIZATION_URL).hasAuthority("VIEW_ORGANIZATIONS")
+                        .requestMatchers(HttpMethod.POST, ORGANIZATION_URL).hasAuthority("EDIT_ORGANIZATIONS")
+                        .requestMatchers(HttpMethod.PATCH, ORGANIZATION_URL).hasAuthority("EDIT_ORGANIZATIONS")
+                        .requestMatchers(HttpMethod.PUT, ORGANIZATION_URL).hasAuthority("EDIT_ORGANIZATIONS")
+                        .requestMatchers(HttpMethod.DELETE, ORGANIZATION_URL).hasAuthority("EDIT_ORGANIZATIONS")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {
                             throw authException;

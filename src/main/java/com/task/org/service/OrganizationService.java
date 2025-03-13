@@ -12,13 +12,14 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 @Service
 @Transactional
 public class OrganizationService {
     private final OrganizationRepository organizationRepository;
     private final OrganizationMapper organizationMapper;
     private final OrganizationDetailMapper organizationDetailMapper;
+    private static final String ORG_ERROR_REASON="No organization with id:";
+
 
     public OrganizationService(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper, OrganizationDetailMapper organizationDetailMapper) {
         this.organizationRepository = organizationRepository;
@@ -27,12 +28,12 @@ public class OrganizationService {
     }
 
     public List<OrganizationDTO> getAllOrganizations() {
-        return organizationRepository.findAll().stream().map(organizationMapper).collect(Collectors.toList());
+        return organizationRepository.findAll().stream().map(organizationMapper).toList();
     }
 
     public OrganizationDetailDTO getOrganization(Long orgId) {
         return organizationRepository.findById(orgId).stream().map(organizationDetailMapper).findFirst().orElseThrow(()->{
-            throw new IllegalStateException("No organization with id: "+orgId);
+            throw new IllegalStateException(ORG_ERROR_REASON+" "+orgId);
         });
     }
 
@@ -50,14 +51,11 @@ public class OrganizationService {
             existingOrganization.setUpdatedTimeStamp(LocalDateTime.now());
             organizationRepository.save(existingOrganization);
         },()->{
-            throw new IllegalStateException("No organization with id: "+orgId);
+            throw new IllegalStateException(ORG_ERROR_REASON+" "+orgId);
         });
     }
 
     public void deleteOrganization(Long orgId) {
-        Organization organization = organizationRepository.findById(orgId).orElseThrow(()->{
-            throw new IllegalStateException("No organization with id: "+orgId);
-        });
         organizationRepository.deleteById(orgId);
     }
 }

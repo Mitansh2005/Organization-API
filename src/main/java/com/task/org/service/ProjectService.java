@@ -92,9 +92,7 @@ public class ProjectService {
     }
 
     public void removeEmployees(Long projectId, List<Long> employeeIds) {
-        projectRepository.findById(projectId).ifPresent(existingProject -> {
-            employeeRepository.deleteAllById(employeeIds);
-        });
+        projectRepository.findById(projectId).ifPresent(existingProject -> employeeRepository.deleteAllById(employeeIds));
     }
 
     public void deleteProject(Long projectId) {
